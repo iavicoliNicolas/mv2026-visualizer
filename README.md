@@ -37,7 +37,7 @@ sudo apt-get install -y libwebkit2gtk-4.1-dev build-essential curl wget file \
   libxdo-dev libssl-dev libayatana-appindicator3-dev librsvg2-dev patchelf
 ```
 
-En Ubuntu 22.04 el paquete de AppIndicator del workflow de GitHub es `libappindicator3-dev`. `libwebkit2gtk-4.1-dev` es el que pide Tauri 2.
+En Ubuntu 22.04 `libappindicator3-dev` y `libayatana-appindicator3-dev` no se pueden instalar juntos. El workflow usa `libwebkit2gtk-4.1-dev` y `libayatana-appindicator3-dev`, que es el que Tauri 2 carga primero.
 
 ## Desarrollo
 
