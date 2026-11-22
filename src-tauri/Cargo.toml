@@ -1,0 +1,26 @@
+[package]
+name = "mv2026-visualizer"
+version = "0.1.0"
+description = "Visualizador paso a paso de la máquina virtual MV2026"
+authors = ["Nicolás Iavicoli"]
+edition = "2024"
+rust-version = "1.90"
+
+[lib]
+name = "mv2026_visualizer_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-dialog = "2"
+tauri-plugin-fs = "2"
+
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = 3
+panic = "abort"
+strip = true

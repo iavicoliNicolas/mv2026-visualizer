@@ -50,6 +50,9 @@
 }
 
 :root {
+  --font-plex: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-plex-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --font-newsreader: "Newsreader", ui-serif, Georgia, serif;
   --background: oklch(0.17 0.014 95);
   --foreground: oklch(0.93 0.02 95);
   --card: oklch(0.21 0.016 95);

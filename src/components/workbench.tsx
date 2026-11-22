@@ -1,6 +1,6 @@
-"use client";
-
 import { useEffect, useState } from "react";
+import { open } from "@tauri-apps/plugin-dialog";
+import { readFile } from "@tauri-apps/plugin-fs";
 
 import { CodeView } from "@/components/code-view";
 import { ConsoleView } from "@/components/console-view";
@@ -8,7 +8,7 @@ import { CycleView } from "@/components/cycle-view";
 import { MemoryView } from "@/components/memory-view";
 import { Panel } from "@/components/panel";
 import { RegisterView } from "@/components/register-view";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -27,7 +27,15 @@ import {
   stepInstruction,
 } from "@/vm";
 import type { Machine } from "@/vm";
-import { cn } from "cn";
+
+function messageOf(error: unknown): string {
+  if (typeof error === "string" && error.trim()) return error;
+  if (error instanceof Error && error.message) return error.message;
+  if (error && typeof error === "object" && "message" in error && typeof error.message === "string") {
+    return error.message;
+  }
+  return "No se pudo abrir el archivo";
+}
 
 const HOLA_BLURB =
   "Cada MOV [n], letra escribe un long de 4 bytes. Se pisan, y al final H, o, l y a quedan en DS+3. SYS 2 las imprime.";
@@ -164,11 +172,27 @@ export function Workbench() {
     setRunning(true);
   }
 
-  async function openFile(file: File) {
-    const bytes = new Uint8Array(await file.arrayBuffer());
-    const magic = String.fromCharCode(...bytes.subarray(0, 5));
-    const kind = magic === "VMI26" || file.name.toLowerCase().endsWith(".vmi") ? "vmi" : "vmx";
-    boot({ bytes, name: file.name, kind, blurb: kind === "vmi" ? "Imagen VMI26 restaurada." : "" });
+  async function openNative() {
+    try {
+      const selected = await open({
+        title: "Abrir .vmx / .vmi",
+        multiple: false,
+        filters: [{ name: "Binarios MV2026", extensions: ["vmx", "vmi"] }],
+      });
+      if (typeof selected !== "string") return;
+      const bytes = new Uint8Array(await readFile(selected));
+      const name = selected.split(/[/\\]/).pop() || "programa.vmx";
+      const magic = new TextDecoder().decode(bytes.subarray(0, 5));
+      const kind = magic === "VMI26" || name.toLowerCase().endsWith(".vmi") ? "vmi" : "vmx";
+      boot({
+        bytes,
+        name,
+        kind,
+        blurb: kind === "vmi" ? "Imagen VMI26 restaurada." : "",
+      });
+    } catch (error) {
+      setLoadError(messageOf(error));
+    }
   }
 
   function loadSample(id: "hola" | "banderas" | "salto") {
@@ -224,19 +248,9 @@ export function Workbench() {
               Salto
             </Button>
           </div>
-          <label className={cn(buttonVariants({ variant: "outline", size: "sm" }), "cursor-pointer")}>
+          <Button size="sm" variant="outline" onClick={() => void openNative()}>
             Abrir .vmx / .vmi
-            <input
-              type="file"
-              accept=".vmx,.vmi,application/octet-stream"
-              className="sr-only"
-              onChange={(event) => {
-                const file = event.target.files?.[0];
-                if (file) void openFile(file);
-                event.target.value = "";
-              }}
-            />
-          </label>
+          </Button>
           <div className="grid gap-1">
             <Label htmlFor="ram" className="text-[10px] tracking-wide text-muted-foreground uppercase">
               RAM
