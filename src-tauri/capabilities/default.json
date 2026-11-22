@@ -1,0 +1,27 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "La ventana principal puede abrir un diálogo nativo y leer el .vmx o .vmi elegido.",
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    "dialog:default",
+    "fs:allow-read-file",
+    {
+      "identifier": "fs:scope",
+      "allow": [
+        { "path": "$HOME/**" },
+        { "path": "$DOCUMENT/**" },
+        { "path": "$DOWNLOAD/**" },
+        { "path": "$DESKTOP/**" },
+        { "path": "$PUBLIC/**" },
+        { "path": "$TEMP/**" },
+        { "path": "$RESOURCE/**" },
+        { "path": "/tmp/**" },
+        { "path": "/mnt/**" },
+        { "path": "/media/**" },
+        { "path": "/run/media/**" }
+      ]
+    }
+  ]
+}

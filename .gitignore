@@ -13,9 +13,8 @@
 # testing
 /coverage
 
-# next.js
-/.next/
-/out/
+# vite
+/dist
 
 # production
 /build
@@ -33,8 +32,9 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 
-# vercel
-.vercel
+# tauri
+/src-tauri/target
+/src-tauri/gen
 
 # typescript
 *.tsbuildinfo
